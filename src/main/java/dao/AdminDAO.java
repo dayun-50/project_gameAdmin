@@ -46,6 +46,10 @@ public class AdminDAO {
 		}
 	}
 	
+//	public static void main(String[] args) {
+//		System.out.println(encrypt("Master!1"));
+//	}
+//	
 	
 	public int AdminLogin(AdminDTO dto) throws Exception { // 관리자 로그인
 		String sql = "select * from admin where admin_id = ? and admin_pw = ?";
