@@ -25,8 +25,10 @@ public class AdminController extends HttpServlet {
 			if(cmd.equals("/adminLogin.AdminController")) { // 관리자 로그인
 				String id = request.getParameter("id");
 				String pw = request.getParameter("pw");
-				int result = dao.AdminLogin(new AdminDTO(id,pw));
-
+				String pw1 = dao.encrypt(pw);
+				int result = dao.AdminLogin(new AdminDTO(id,pw1));
+				System.out.println(result);
+				System.out.println(pw1);
 				if(result == 1) {
 					session.setAttribute("loginId", id);
 					response.getWriter().write(String.valueOf(result));
