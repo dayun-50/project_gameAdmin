@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import commons.UsersConfig;
 import dao.AdminDAO;
 import dto.AdminDTO;
+import dto.userDTO;
 
 
 @WebServlet("*.AdminController")
@@ -27,12 +30,36 @@ public class AdminController extends HttpServlet {
 				String pw = request.getParameter("pw");
 				String pw1 = dao.encrypt(pw);
 				int result = dao.AdminLogin(new AdminDTO(id,pw1));
-				System.out.println(result);
-				System.out.println(pw1);
+
 				if(result == 1) {
 					session.setAttribute("loginId", id);
 					response.getWriter().write(String.valueOf(result));
 				}
+			}else if(cmd.equals("/adminMain.AdminController")) { // 로그인 후 관리페이지 이동
+				response.sendRedirect("/admin/main.jsp");
+				
+			}else if(cmd.equals("/userpage.AdminController")) { // 사용자 관리 페이지 이동
+				String cpageStr = request.getParameter("cpage");
+				if (cpageStr == null || cpageStr.isEmpty()) {
+					response.sendRedirect(request.getRequestURI() + "?cpage=1");
+					return;
+				}
+				int cpage = Integer.parseInt(cpageStr);
+
+			    // 전체 레코드 개수 가져오기
+			    int recordTotalCount = dao.getUserCount();
+
+			    ArrayList<userDTO> list =
+			            dao.selectFromTo(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
+			                             cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
+			    
+				request.setAttribute("list", list);
+				request.setAttribute("recordTotalCount", recordTotalCount);
+				request.setAttribute("recordCountPerPage",UsersConfig.RECORD_COUNT_PER_PAGE);
+				request.setAttribute("naviCountPerPage", UsersConfig.NABI_COUNT_PER_PAGE);
+				request.setAttribute("currentPage", cpage);
+				request.getRequestDispatcher("/admin/user.jsp").forward(request, response);
+			
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
