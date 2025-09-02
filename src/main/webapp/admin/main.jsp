@@ -390,7 +390,7 @@
             <button class="write-btn">공지작성</button>
         </div>
 
-
+	
     </div>
 
     <script>
@@ -411,7 +411,31 @@
         	window.location.href = "/userpage.AdminController";
         });
         
-        
+     // 공통 검색 함수
+        function filterTable(keyword) {
+            $("#table2 tr").each(function (index) {
+                if (index === 0) return; // 첫 번째 행(헤더)은 건너뜀
+
+                let title = $(this).find("td:first").text(); // 첫 번째 열(제목)
+                if (title.includes(keyword)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // 1. input에 글씨 입력할 때마다 실시간 검색
+        $("#adminsearch").on("input", function () {
+            let keyword = $(this).val().trim();
+            filterTable(keyword);
+        });
+
+        // 2. 검색 버튼 클릭했을 때 실행
+        $(".searchbutton").on("click", function () {
+            let keyword = $("#adminsearch").val().trim();
+            filterTable(keyword);
+        });
     </script>
 
     <footer class="footer">
