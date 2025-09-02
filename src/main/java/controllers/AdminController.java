@@ -60,6 +60,39 @@ public class AdminController extends HttpServlet {
 				request.setAttribute("currentPage", cpage);
 				request.getRequestDispatcher("/admin/user.jsp").forward(request, response);
 			
+			}else if(cmd.equals("/userDetail.AdminController")) { //유저 상세페이지
+				String user_id = request.getParameter("userId");
+				
+				userDTO dto = dao.getUserPage(user_id);
+				String black = dao.blackUser(user_id);
+				
+				if(black != "") {
+					request.setAttribute("blackUser", "O ) "+black);
+				}else {
+					request.setAttribute("blackUser", black);
+				}
+				request.setAttribute("dto", dto);
+				request.getRequestDispatcher("/users/usersPage.jsp").forward(request, response);
+			
+			}else if(cmd.equals("/inBlackListe.AdminController")) { // 블랙리스트 등록
+				String user_id = request.getParameter("userId");
+				String reason = request.getParameter("reason");
+				int resutl = dao.blackInsert(user_id, reason);
+				
+				request.setAttribute("userId", user_id);
+				response.getWriter().write(String.valueOf(resutl));
+				
+			}else if(cmd.equals("/dleBlackListe.AdminController")) { // 블랙리스트 해제
+				String user_id = request.getParameter("userId");
+				int resutl = dao.blackDelete(user_id);
+				
+				request.setAttribute("userId", user_id);
+				response.getWriter().write(String.valueOf(resutl));
+			
+			}else if(cmd.equals("/serchUser_Nicname.AdminController")) { // 유저 닉네임 검색
+				String user_nickname = request.getParameter("adminsearch");
+				
+				
 			}
 		}catch(Exception e) {
 			e.printStackTrace();

@@ -341,15 +341,17 @@
         </div>
 
       
-
+<form action="/serchUser_Nicname.AdminController" method="post">
         <div class="search">
             <label for="adminsearch"><i class="fas fa-search"></i></label>
+            
             <div class="adminsearch">
-                <input type="text" id="adminsearch" name="adminsearch">
+                <input type="text" id="adminsearch" name="adminsearch" placeholder="검색할 유저 닉네임 입력">
             </div>
             <button class="searchbutton">검색</button>
+            
         </div>
-
+</form>
         <table class="table2" id="table2">
             <tr>
             	<th></th>
@@ -358,7 +360,7 @@
                 <th>날짜</th>
             </tr>
            <c:forEach var="user" items="${list}" varStatus="status">
-           	<tr>
+           	<tr class="user-row" data-userid="${user.user_id}">
            		<td>${status.index + 1 }</td>
            		<td>${user.user_id }</td>
            		<td>${user.user_nickname }</td>
@@ -429,7 +431,10 @@
 	    
 		document.getElementById("pageNavi").innerHTML = html;
 		
-        
+		$(document).on("click", ".user-row", function() { //유저 상세 페이지 이동
+		    let userId = $(this).data("userid");
+		    window.location.href = "/userDetail.AdminController?userId=" + userId;
+		});
     </script>
 
     <footer class="footer">

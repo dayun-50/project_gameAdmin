@@ -139,4 +139,67 @@ public class AdminDAO {
 	    }
 	}
 	
+	//유저 상세정보 출력
+	public userDTO getUserPage(String user_id) throws Exception {
+		String sql = "select * from users where user_id = ?";
+		try(Connection con = this.getConnection();
+		        PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, user_id);
+			
+			try(ResultSet rs = stat.executeQuery()){
+				if(rs.next()) {
+					String id = rs.getString("user_id");
+					String nickname = rs.getString("user_nickname");
+					String name = rs.getString("user_name");
+					String phone = rs.getString("user_phone");
+					String email = rs.getString("user_email");
+					Timestamp date = rs.getTimestamp("user_join_date");
+					String regdate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+					String agree = rs.getString("agree");
+					
+					return new userDTO(id, "", nickname, name, phone, email, regdate, agree);
+				}
+				return null;
+			}
+		}
+	}
+	
+	//유저 블랙리스트 체크
+	public String blackUser(String user_id) throws Exception{
+		String sql = "select black_user_id, black_comment from BlackList where black_user_id = ?";
+		try(Connection con = this.getConnection();
+		        PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, user_id);
+			
+			try(ResultSet rs = stat.executeQuery()){
+				if(rs.next()) {
+					return rs.getString("black_comment");
+				}
+				return "";
+			}
+		}
+	}
+	
+	//유저 블랙리스트 등록
+	public int blackInsert(String user_id, String comment) throws Exception{
+		String sql = "insert into BlackList values(BlackList_seq.nextval,?,?)";
+		try(Connection con = this.getConnection();
+		        PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, user_id);
+			stat.setString(2, comment);
+			
+			return stat.executeUpdate();
+		}
+	}
+	
+	//유저 블랙리스트 해제
+	public int blackDelete(String user_id) throws Exception{
+		String sql = "delete from BlackList where black_user_id = ?";
+		try(Connection con = this.getConnection();
+		        PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, user_id);
+			
+			return stat.executeUpdate();
+		}
+	}
 }
