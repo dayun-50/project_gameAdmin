@@ -436,6 +436,12 @@
             let keyword = $("#adminsearch").val().trim();
             filterTable(keyword);
         });
+        $(".box button:contains('사이트 바로가기')").on("click", function() {
+	        window.location.href = "/project_game/game/gameMain.jsp";
+	    });
+        $(".box button:contains('게시물 관리')").on("click", function() {
+	        alert("지금 보고 계시는 화면이 게시물 관리 페이지 입니다.");
+	    });
     </script>
 
     <footer class="footer">
