@@ -260,7 +260,7 @@ public class AdminDAO {
 
 	//게임 게시판 댓글 출력
 	public ArrayList<GameboardComentDTO> seletAllGBComent(String prentNum) throws Exception{
-		String sql = "select * from Game_Coment where game_parent_seq = ?";
+		String sql = "select * from Game_Coment where game_parent_seq = ? ORDER BY game_coment_seq DESC";
 		try(Connection con = this.getConnection();
 				PreparedStatement stat = con.prepareStatement(sql);){
 			stat.setString(1, prentNum);
@@ -301,7 +301,7 @@ public class AdminDAO {
 		}
 	}
 
-	//게시판 view카운트
+	//게임 게시판 view카운트
 	public void count(int count, String seq) throws Exception {
 		String sql = "update game_board set view_count = ? where game_seq = ?";
 		try(Connection con = this.getConnection();
@@ -371,6 +371,20 @@ public class AdminDAO {
 			stat.setString(2, seq);
 
 			return stat.executeUpdate();
+		}
+	}
+	
+	//게임 게시물 갯수 출력
+	public int getGameboardCount() throws Exception {
+		String sql = "SELECT COUNT(*) FROM game_board";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);
+				ResultSet rs = stat.executeQuery()) {
+			if(rs.next()) {
+				return rs.getInt(1);
+			}else {
+				return 0;
+			}
 		}
 	}
 }

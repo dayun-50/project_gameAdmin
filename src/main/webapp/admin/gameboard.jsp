@@ -331,8 +331,7 @@
         <div class="control">
             <div class="box">
                 <button id="userpage">사용자 관리</button>
-                <button>게시물 관리</button>
-                <button>사이트 바로가기</button>
+                <button id="boardpage">게시물 관리</button>
             </div>
         </div>
 
@@ -342,7 +341,7 @@
 
         <div class="control2">
             <div class="box2">
-                <button>문의사항</button>
+                <button id="mainpage">문의사항</button>
                 <button>자유게시판</button>
                 <button id="gameboard">게임게시판</button>
             </div>
@@ -358,16 +357,18 @@
 
         <table class="table2" id="table2">
             <tr>
-                <th>제목</th>
+                <th></th>
                 <th>닉네임</th>
+                <th>제목</th>
+                <th>게임</th>
                 <th>날짜</th>
-                <th>조회수</th>
             </tr>
-           <c:forEach var="board" items="${list}" varStatus="status">
+           <c:forEach var="board" items="${list}">
            	<tr class="user-row" data-gameboardnum="${board.game_seq}">
-           		<td>${status.index + 1 }</td>
+           		<td>${board.game_seq}</td>
            		<td>${board.gamewrtier }</td>
            		<td>${board.gameboardtitle }</td>
+           		<td>${board.gameid }</td>
            		<td>${board.game_board_date }</td>
            	</tr>
            </c:forEach>
@@ -470,18 +471,24 @@
 		if(endNavi == pageTotalCount) {needNext = false;}
 
 		if (needPrev) {
-			html += "<a href='/userpage.AdminController?cpage=" + (startNavi - 1) + "'>< </a>";
+			html += "<a href='/gameboard.AdminController?cpage=" + (startNavi - 1) + "'>< </a>";
 	      }
 
 	      for (let i = startNavi; i <= endNavi; i++) {
-	    	  html += "<a href='/userpage.AdminController?cpage=" + i + "'>" + i + "</a> ";
+	    	  html += "<a href='/gameboard.AdminController?cpage=" + i + "'>" + i + "</a> ";
 	      }
 
 	      if (needNext) {
-	    	  html += "<a href='/userpage.AdminController?cpage=" + (endNavi + 1) + "'>> </a>";
+	    	  html += "<a href='/gameboard.AdminController?cpage=" + (endNavi + 1) + "'>> </a>";
 	      }
 	    
 		document.getElementById("pageNavi").innerHTML = html;
+		
+		
+		 //같은페이지인데 이동시
+        $(".box button:contains('게시물 관리')").on("click", function() {
+	        alert("지금 보고 계시는 화면이 게시물 관리 페이지 입니다.");
+	    });
     </script>
 
     <footer class="footer">

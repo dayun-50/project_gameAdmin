@@ -246,7 +246,7 @@
            </c:forEach>
             </div>
 
-            <form class="comment-form" action="/comentInsert.GameComentController" method="post">
+            <form class="comment-form" action="/comentInsert.AdminController" method="post">
 				<input type="hidden" name="seq" value="${list[0].game_seq }">
                 <textarea placeholder="댓글을 입력하세요..." name="coment" required></textarea>
                 <button type="submit">댓글 등록</button>

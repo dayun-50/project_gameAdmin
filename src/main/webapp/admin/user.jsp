@@ -330,9 +330,8 @@
 
         <div class="control">
             <div class="box">
-                <button>사용자 관리</button>
-                <button>게시물 관리</button>
-                <button>사이트 바로가기</button>
+                <button id="userpage">사용자 관리</button>
+                <button id="boardpage">게시물 관리</button>
             </div>
         </div>
 

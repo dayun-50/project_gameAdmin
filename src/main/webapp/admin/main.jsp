@@ -331,8 +331,7 @@
         <div class="control">
             <div class="box">
                 <button id="userpage">사용자 관리</button>
-                <button>게시물 관리</button>
-                <button>사이트 바로가기</button>
+                <button id="boardpage">게시물 관리</button>
             </div>
         </div>
 
@@ -436,7 +435,7 @@
             let keyword = $("#adminsearch").val().trim();
             filterTable(keyword);
         });
-<<<<<<< HEAD
+
         
         $("#gameboard").on("click", function(){ // 게임 보드 이동버튼
         	window.location.href = "/gameboard.AdminController"
@@ -450,14 +449,11 @@
         	window.location.href = "/freeboard.AdminController"
         });
         
-=======
-        $(".box button:contains('사이트 바로가기')").on("click", function() {
-	        window.location.href = "/project_game/game/gameMain.jsp";
-	    });
+        //같은페이지인데 이동시
         $(".box button:contains('게시물 관리')").on("click", function() {
 	        alert("지금 보고 계시는 화면이 게시물 관리 페이지 입니다.");
 	    });
->>>>>>> 52c023f80d2c9f589b797531e4a25731b2c73f79
+
     </script>
 
     <footer class="footer">
