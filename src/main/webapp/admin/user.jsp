@@ -455,6 +455,14 @@
 	        let keyword = $(this).val().trim();
 	        filterTable(keyword);
 	    });
+	    // 누르면 game_project_game/game/game.Main.jsp로 이동!!!
+	    $(".box button:contains('사이트 바로가기')").on("click", function() {
+	        window.location.href = "/project_game/game/gameMain.jsp";
+	    });
+	    // 누르면 main.jsp로 이동!!
+	    $(".box button:contains('게시물 관리')").on("click", function() {
+	    	window.location.href = "<%= request.getContextPath() %>/admin/main.jsp";
+	    });
     </script>
 
     <footer class="footer">
