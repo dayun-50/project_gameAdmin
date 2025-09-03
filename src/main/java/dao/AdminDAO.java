@@ -15,6 +15,8 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import dto.AdminDTO;
+import dto.FreeboardComentDTO;
+import dto.FreeboardDTO;
 import dto.GameboardComentDTO;
 import dto.GameboardDTO;
 import dto.userDTO;
@@ -313,7 +315,7 @@ public class AdminDAO {
 	}
 
 
-	//댓글 입력
+	//게임 게시판 댓글 입력
 	public int comentInsert(GameboardComentDTO dto) throws Exception {
 		String sql = "insert into Game_Coment values(Game_Coment_seq.NEXTVAL,?,?,?,?,?)";
 		try(Connection con = this.getConnection();
@@ -328,7 +330,7 @@ public class AdminDAO {
 		}
 	}
 
-	//댓글 삭제
+	//게임 게시판 댓글 삭제
 	public int comentDelete(String seq) throws Exception {
 		String sql = "delete from Game_Coment where game_coment_seq = ?";
 		try(Connection con = this.getConnection();
@@ -339,7 +341,7 @@ public class AdminDAO {
 		}
 	}
 
-	//댓글 수정
+	//게임 게시판 댓글 수정
 	public int comentUpdate(String seq, String text) throws Exception {
 		String sql = "update Game_Coment set game_coment = ? where game_coment_seq = ?";
 		try(Connection con = this.getConnection();
@@ -351,7 +353,7 @@ public class AdminDAO {
 		}
 	}	
 
-	//게시물 삭제
+	//게임 게시판 게시물 삭제
 	public int deleteGameBoard(String seq) throws Exception{
 		String sql = "delete from game_board where game_seq = ?";
 		try(Connection con = this.getConnection();
@@ -362,7 +364,7 @@ public class AdminDAO {
 		}
 	}
 
-	//게시물 수정
+	//게임 게시판 게시물 수정
 	public int updateGameBoard(String seq, String text) throws Exception  {
 		String sql = "update game_board set gamecoment = ? where game_seq = ?";
 		try(Connection con = this.getConnection();
@@ -373,7 +375,7 @@ public class AdminDAO {
 			return stat.executeUpdate();
 		}
 	}
-	
+
 	//게임 게시물 갯수 출력
 	public int getGameboardCount() throws Exception {
 		String sql = "SELECT COUNT(*) FROM game_board";
@@ -385,6 +387,184 @@ public class AdminDAO {
 			}else {
 				return 0;
 			}
+		}
+	}
+
+	//자유 게시판 출력
+	public ArrayList<FreeboardDTO> seletAllFreeboard(int from, int to) throws Exception{
+		String sql =  "SELECT * FROM ( SELECT freeBoard.*, ROW_NUMBER() OVER (ORDER BY fb_date DESC) rn FROM freeBoard ) sub WHERE rn BETWEEN ? AND ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setInt(1, from);
+			stat.setInt(2, to);
+
+			ArrayList<FreeboardDTO> list = new ArrayList<>();
+			try(ResultSet rs = stat.executeQuery();){
+				while(rs.next()){
+					int fb_id = rs.getInt("fb_id");
+					String fb_user_name = rs.getString("fb_user_name");
+					String fb_Title = rs.getString("fb_Title");
+					String fb_write = rs.getString("fb_write");
+					Timestamp fb_date = rs.getTimestamp("fb_date"); 
+					String regdate = new SimpleDateFormat("yyyy.MM.dd HH:mm").format(fb_date);
+					int view_count = rs.getInt("view_count");
+
+					list.add(new FreeboardDTO(fb_id, fb_user_name, fb_Title, fb_write, regdate, view_count));
+				}
+				return list;
+			}
+		}
+	}
+
+	//자유 게시판 갯수 출력
+	public int getFreeboardCount() throws Exception {
+		String sql = "SELECT COUNT(*) FROM freeBoard";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);
+				ResultSet rs = stat.executeQuery()) {
+			if(rs.next()) {
+				return rs.getInt(1);
+			}else {
+				return 0;
+			}
+		}
+	}
+
+	//자유 게시물 출력
+	public ArrayList<FreeboardDTO> seletAllFreeboardPrint(String freeboardNum) throws Exception{
+		String sql = "select * from freeBoard where fb_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, freeboardNum);
+
+			ArrayList<FreeboardDTO> list = new ArrayList<>();
+			try(ResultSet rs = stat.executeQuery();){
+				if(rs.next()) {
+					int fb_id = rs.getInt("fb_id");
+					String fb_user_name = rs.getString("fb_user_name");
+					String fb_Title = rs.getString("fb_Title");
+					String fb_write = rs.getString("fb_write");
+					Timestamp fb_date = rs.getTimestamp("fb_date"); 
+					String regdate = new SimpleDateFormat("yyyy.MM.dd HH:mm").format(fb_date);
+					int view_count = rs.getInt("view_count");
+
+					list.add(new FreeboardDTO(fb_id, fb_user_name, fb_Title, fb_write, regdate, view_count));
+				}
+				return list;
+			}
+		}
+	}
+
+	//자유 게시물 댓글 출력
+	public ArrayList<FreeboardComentDTO> seletAllFBComent(String prentNum) throws Exception{
+		String sql = "select * from freeComment where fb_id = ? ORDER BY fc_date DESC";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, prentNum);
+
+			ArrayList<FreeboardComentDTO> list = new ArrayList<>();
+			try(ResultSet rs = stat.executeQuery();){
+				while(rs.next()) {
+					int seq = rs.getInt("fc_id");
+					int fb_id = rs.getInt("fb_id");
+					String fc_user_name = rs.getString("fc_user_name");
+					String fc_write = rs.getString("fc_write");
+					Timestamp fb_date = rs.getTimestamp("fc_date"); 
+					String regdate = new SimpleDateFormat("yyyy.MM.dd HH:mm").format(fb_date);
+
+					list.add(new FreeboardComentDTO(seq, fb_id, fc_user_name, fc_write, regdate));
+				}
+			}
+			return list;
+		}
+	}
+
+	//댓글 갯수 카운트
+	public int fCountComent(String parent_seq) throws Exception {
+		String sql = "SELECT COUNT(*) AS cnt FROM freeComment WHERE fb_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, parent_seq);
+
+			try(ResultSet rs = stat.executeQuery()){
+				if(rs.next()) {
+					int result = rs.getInt("cnt");
+					return result;
+				}else {
+					return 0;
+				}
+			}
+		}
+	}
+
+	//프리 게시판 view카운트
+	public void fCount(int count, String seq) throws Exception {
+		String sql = "update freeBoard set view_count = ? where fb_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setInt(1, count);
+			stat.setString(2, seq);
+			stat.executeUpdate();
+		}
+	}
+
+	//자유 게시판 글삭제
+	public int deleteFreeBoard(String seq) throws Exception{
+		String sql = "delete from freeBoard where fb_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql)){
+			stat.setString(1, seq);
+
+			return stat.executeUpdate();
+		}
+	}
+	
+	//자유 게시판 글수정
+	public int updateFreeBoard(String seq, String text) throws Exception  {
+		String sql = "update freeBoard set fb_write = ? where fb_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql)){
+			stat.setString(1, text);
+			stat.setString(2, seq);
+
+			return stat.executeUpdate();
+		}
+	}
+	
+	//자유 게시판 댓글 삭제
+	public int fComentDelete(String seq) throws Exception {
+		String sql = "delete from freeComment where fc_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, seq);
+
+			return stat.executeUpdate();
+		}
+	}
+	
+	//자유 게시판 댓글 수정
+	public int fComentUpdate(String seq, String text) throws Exception {
+		String sql = "update freeComment set fc_write = ? where fc_id = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, text);
+			stat.setString(2, seq);
+
+			return stat.executeUpdate();
+		}
+	}
+	
+	//자유 게시판 댓글 입력
+	public int fComentInsert(FreeboardComentDTO dto) throws Exception {
+		String sql = "insert into freeComment values(freeComment_seq.NEXTVAL,?,?,?,?)";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setInt(1, dto.getFb_id());
+			stat.setString(2, dto.getFc_user_name());
+			stat.setString(3, dto.getFc_write());
+			stat.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+
+			return stat.executeUpdate();
 		}
 	}
 }

@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSession;
 import commons.UsersConfig;
 import dao.AdminDAO;
 import dto.AdminDTO;
+import dto.FreeboardComentDTO;
+import dto.FreeboardDTO;
 import dto.GameboardComentDTO;
 import dto.GameboardDTO;
 import dto.userDTO;
@@ -26,8 +28,8 @@ public class AdminController extends HttpServlet {
 		AdminDAO dao = AdminDAO.getInstance();
 		HttpSession session = request.getSession();
 		response.setContentType("application/json; charset=UTF-8");
-	    request.setCharacterEncoding("UTF-8");
-		
+		request.setCharacterEncoding("UTF-8");
+
 		try {
 			if(cmd.equals("/adminLogin.AdminController")) { // 관리자 로그인
 				String id = request.getParameter("id");
@@ -114,7 +116,7 @@ public class AdminController extends HttpServlet {
 				request.setAttribute("currentPage", cpage);
 				request.getRequestDispatcher("/admin/gameboard.jsp").forward(request, response);
 
-			}else if(cmd.equals("/gameboardNum.AdminController")) { //게임 게시물 출력
+			}else if(cmd.equals("/gameboardNum.AdminController")) { // 게임 게시물 출력
 				String gameboardnum = request.getParameter("gameboardnum");
 				ArrayList<GameboardDTO> list = dao.seletAllGameboardPrint(gameboardnum);
 				ArrayList<GameboardComentDTO> comentList = dao.seletAllGBComent(gameboardnum);
@@ -129,34 +131,34 @@ public class AdminController extends HttpServlet {
 				request.setAttribute("list", list);
 				request.getRequestDispatcher("/board/gameboardPage.jsp").forward(request, response);
 
-			}else if(cmd.equals("/delGameboard.AdminController")) { //글 삭제
+			}else if(cmd.equals("/delGameboard.AdminController")) { // 게임 게시판 글 삭제
 				String seq = request.getParameter("seq");
 				int result = dao.deleteGameBoard(seq);
-				
+
 				response.getWriter().write(String.valueOf(result));
-				
-			}else if(cmd.equals("/updateGameboard.AdminController")) { //글 수정
+
+			}else if(cmd.equals("/updateGameboard.AdminController")) { // 게임 게시판 글 수정
 				String text = request.getParameter("text");
 				String seq = request.getParameter("seq");
-				
+
 				int result = dao.updateGameBoard(seq, text);
 				response.getWriter().write(String.valueOf(result));
-				
-			}else if(cmd.equals("/comentInsert.AdminController")){ //댓글 입력
+
+			}else if(cmd.equals("/comentInsert.AdminController")){ // 게임 게시판 댓글 입력
 				String prent_seq = request.getParameter("seq");
 				String coment = request.getParameter("coment");
 				String nickname = "관리자";
-				
+
 				dao.comentInsert(new GameboardComentDTO(0, Integer.parseInt(prent_seq), 0, nickname, coment, ""));
 				response.sendRedirect("/gameboardNum.AdminController?gameboardnum="+prent_seq);
-				
-			}else if(cmd.equals("/delGameboardComent.AdminController")) { //댓글 삭제
+
+			}else if(cmd.equals("/delGameboardComent.AdminController")) { // 게임 게시판 댓글 삭제
 				String seq = request.getParameter("seq");
 
 				int result = dao.comentDelete(seq);
 				response.getWriter().write(String.valueOf(result));
 
-			}else if(cmd.equals("/updatGameboardComent.AdminController")) { //댓글 수정
+			}else if(cmd.equals("/updatGameboardComent.AdminController")) { // 게임 게시판 댓글 수정
 				String seq = request.getParameter("seq");
 				String text = request.getParameter("text");
 
@@ -164,7 +166,75 @@ public class AdminController extends HttpServlet {
 				response.getWriter().write(String.valueOf(result));
 
 			}else if(cmd.equals("/freeboard.AdminController")) { // 자유게시판 이동버튼
+				String cpageStr = request.getParameter("cpage");
+				if (cpageStr == null || cpageStr.isEmpty()) {
+					response.sendRedirect(request.getRequestURI() + "?cpage=1");
+					return;
+				}
+				int cpage = Integer.parseInt(cpageStr);
 
+				int recordTotalCount = dao.getFreeboardCount();
+
+				ArrayList<FreeboardDTO> list =
+						dao.seletAllFreeboard(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
+								cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
+
+				request.setAttribute("list", list);
+				request.setAttribute("recordTotalCount", recordTotalCount);
+				request.setAttribute("recordCountPerPage",UsersConfig.RECORD_COUNT_PER_PAGE);
+				request.setAttribute("naviCountPerPage", UsersConfig.NABI_COUNT_PER_PAGE);
+				request.setAttribute("currentPage", cpage);
+				request.getRequestDispatcher("/admin/freeboard.jsp").forward(request, response);
+
+			}else if(cmd.equals("/freeboardNum.AdminController")) { // 자유 게시물 출력
+				String freeboardnum = request.getParameter("freeboardnum");
+				ArrayList<FreeboardDTO> list = dao.seletAllFreeboardPrint(freeboardnum);
+				ArrayList<FreeboardComentDTO> comentList = dao.seletAllFBComent(freeboardnum);
+				int comentCount = dao.fCountComent(freeboardnum);
+				int count = list.get(0).getView_count();
+				count += 1;
+				dao.fCount(count, freeboardnum);
+
+				request.setAttribute("viewCount", count);
+				request.setAttribute("comentCount", comentCount);
+				request.setAttribute("comentList", comentList);
+				request.setAttribute("list", list);
+				request.getRequestDispatcher("/board/freeboardPage.jsp").forward(request, response);
+
+			}else if(cmd.equals("/delFreeboard.AdminController")) { // 자유 게시판 글 삭제
+				String seq = request.getParameter("seq");
+				int result = dao.deleteFreeBoard(seq);
+
+				response.getWriter().write(String.valueOf(result));
+
+			}else if(cmd.equals("/updateFreeboard.AdminController")) { // 자유 게시판 글 수정
+				String text = request.getParameter("text");
+				String seq = request.getParameter("seq");
+
+				int result = dao.updateFreeBoard(seq, text);
+				response.getWriter().write(String.valueOf(result));
+
+			}else if(cmd.equals("/delFreeboardComent.AdminController")) { // 자유 게시판 댓글 삭제
+				String seq = request.getParameter("seq");
+
+				int result = dao.fComentDelete(seq);
+				response.getWriter().write(String.valueOf(result));
+				
+			}else if(cmd.equals("/updatFreeboardComent.AdminController")) { // 자유 게시판 댓글 수정
+				String seq = request.getParameter("seq");
+				String text = request.getParameter("text");
+
+				int result = dao.fComentUpdate(seq, text);
+				response.getWriter().write(String.valueOf(result));
+				
+			}else if(cmd.equals("/fComentInsert.AdminController")) { // 자유 게시판 댓글 입력
+				String prent_seq = request.getParameter("seq");
+				String coment = request.getParameter("coment");
+				String nickname = "관리자";
+
+				dao.fComentInsert(new FreeboardComentDTO(0, Integer.parseInt(prent_seq), nickname, coment, ""));
+				response.sendRedirect("/freeboardNum.AdminController?freeboardnum="+prent_seq);
+				
 			}else if(cmd.equals("/QAboard.AdminController")) { // 문의게시판 이동버튼 (로그인 후 메인버튼)
 
 			}

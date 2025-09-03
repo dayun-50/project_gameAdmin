@@ -342,7 +342,7 @@
         <div class="control2">
             <div class="box2">
                 <button id="mainpage">문의사항</button>
-                <button id="freeboard">자유게시판</button>
+                <button>자유게시판</button>
                 <button id="gameboard">게임게시판</button>
             </div>
         </div>
@@ -360,16 +360,14 @@
                 <th></th>
                 <th>닉네임</th>
                 <th>제목</th>
-                <th>게임</th>
                 <th>날짜</th>
             </tr>
            <c:forEach var="board" items="${list}">
-           	<tr class="user-row" data-gameboardnum="${board.game_seq}">
-           		<td>${board.game_seq}</td>
-           		<td>${board.gamewrtier }</td>
-           		<td>${board.gameboardtitle }</td>
-           		<td>${board.gameid }</td>
-           		<td>${board.game_board_date }</td>
+           	<tr class="user-row" data-freeboardnum="${board.fb_id}">
+           		<td>${board.fb_id}</td>
+           		<td>${board.fb_user_name }</td>
+           		<td>${board.fb_Title }</td>
+           		<td>${board.fb_date }</td>
            	</tr>
            </c:forEach>
         </table>
@@ -400,8 +398,8 @@
         });
         
         $(document).on("click", ".user-row", function() { //게임게시판 내용보기
-		    let gameboardnum = $(this).data("gameboardnum");
-		    window.location.href = "/gameboardNum.AdminController?gameboardnum=" + gameboardnum;
+		    let freeboardnum = $(this).data("freeboardnum");
+		    window.location.href = "/freeboardNum.AdminController?freeboardnum=" + freeboardnum;
 		});
 		
         
@@ -471,15 +469,15 @@
 		if(endNavi == pageTotalCount) {needNext = false;}
 
 		if (needPrev) {
-			html += "<a href='/gameboard.AdminController?cpage=" + (startNavi - 1) + "'>< </a>";
+			html += "<a href='/freeboard.AdminController?cpage=" + (startNavi - 1) + "'>< </a>";
 	      }
 
 	      for (let i = startNavi; i <= endNavi; i++) {
-	    	  html += "<a href='/gameboard.AdminController?cpage=" + i + "'>" + i + "</a> ";
+	    	  html += "<a href='/freeboard.AdminController?cpage=" + i + "'>" + i + "</a> ";
 	      }
 
 	      if (needNext) {
-	    	  html += "<a href='/gameboard.AdminController?cpage=" + (endNavi + 1) + "'>> </a>";
+	    	  html += "<a href='/freeboard.AdminController?cpage=" + (endNavi + 1) + "'>> </a>";
 	      }
 	    
 		document.getElementById("pageNavi").innerHTML = html;
@@ -489,8 +487,6 @@
         $(".box button:contains('게시물 관리')").on("click", function() {
 	        alert("지금 보고 계시는 화면이 게시물 관리 페이지 입니다.");
 	    });
-		 
-		
     </script>
 
     <footer class="footer">
