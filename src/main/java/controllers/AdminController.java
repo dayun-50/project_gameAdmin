@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSession;
 import commons.UsersConfig;
 import dao.AdminDAO;
 import dto.AdminDTO;
+import dto.GameboardComentDTO;
+import dto.GameboardDTO;
 import dto.userDTO;
 
 
@@ -89,9 +91,45 @@ public class AdminController extends HttpServlet {
 				request.setAttribute("userId", user_id);
 				response.getWriter().write(String.valueOf(resutl));
 			
-			}else if(cmd.equals("/serchUser_Nicname.AdminController")) { // 유저 닉네임 검색
-				String user_nickname = request.getParameter("adminsearch");
+			}else if(cmd.equals("/gameboard.AdminController")) { // 게임게시판 이동버튼 
+				String cpageStr = request.getParameter("cpage");
+				if (cpageStr == null || cpageStr.isEmpty()) {
+					response.sendRedirect(request.getRequestURI() + "?cpage=1");
+					return;
+				}
+				int cpage = Integer.parseInt(cpageStr);
+
+			    int recordTotalCount = dao.getUserCount();
+
+			    ArrayList<GameboardDTO> list =
+			            dao.seletAllGameboard(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
+			                             cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
 				
+			    request.setAttribute("list", list);
+				request.setAttribute("recordTotalCount", recordTotalCount);
+				request.setAttribute("recordCountPerPage",UsersConfig.RECORD_COUNT_PER_PAGE);
+				request.setAttribute("naviCountPerPage", UsersConfig.NABI_COUNT_PER_PAGE);
+				request.setAttribute("currentPage", cpage);
+				request.getRequestDispatcher("/admin/gameboard.jsp").forward(request, response);
+				
+			}else if(cmd.equals("/gameboardNum.AdminController")) { //게임 게시물 출력
+				String gameboardnum = request.getParameter("gameboardnum");
+				ArrayList<GameboardDTO> list = dao.seletAllGameboardPrint(gameboardnum);
+				ArrayList<GameboardComentDTO> comentList = dao.seletAllGBComent(gameboardnum);
+				int comentCount = dao.countComent(gameboardnum);
+				int count = list.get(0).getView_count();
+				count += 1;
+				dao.count(count, gameboardnum);
+				
+				request.setAttribute("viewCount", count);
+				request.setAttribute("comentCount", comentCount);
+				request.setAttribute("comentList", comentList);
+				request.setAttribute("list", list);
+				request.getRequestDispatcher("/board/gameboardPage.jsp").forward(request, response);
+				
+			}else if(cmd.equals("/freeboard.AdminController")) { // 자유게시판 이동버튼
+				
+			}else if(cmd.equals("/QAboard.AdminController")) { // 문의게시판 이동버튼
 				
 			}
 		}catch(Exception e) {

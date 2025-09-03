@@ -341,7 +341,6 @@
         </div>
 
       
-<form action="/serchUser_Nicname.AdminController" method="post">
         <div class="search">
             <label for="adminsearch"><i class="fas fa-search"></i></label>
             
@@ -351,7 +350,7 @@
             <button class="searchbutton">검색</button>
             
         </div>
-</form>
+
         <table class="table2" id="table2">
             <tr>
             	<th></th>

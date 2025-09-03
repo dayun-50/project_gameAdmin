@@ -337,13 +337,13 @@
         </div>
 
         <div class="top">
-            <h1>Master Admin</h1>
+            <h1>게임 게시판 관리</h1>
         </div>
 
         <div class="control2">
             <div class="box2">
-                <button id="QAboard">문의사항</button>
-                <button id="freeboard">자유게시판</button>
+                <button>문의사항</button>
+                <button>자유게시판</button>
                 <button id="gameboard">게임게시판</button>
             </div>
         </div>
@@ -363,31 +363,18 @@
                 <th>날짜</th>
                 <th>조회수</th>
             </tr>
-            <tr>
-                <td>혜빈쨩</td>
-                <td>하잇</td>
-                <td>2025-08-29</td>
-                <td>나니가스키</td>
-            </tr>
-            <tr>
-                <td>초코민토</td>
-                <td>요리모</td>
-                <td>2025-08-29</td>
-                <td>아나타</td>
-            </tr>
+           <c:forEach var="board" items="${list}" varStatus="status">
+           	<tr class="user-row" data-gameboardnum="${board.game_seq}">
+           		<td>${status.index + 1 }</td>
+           		<td>${board.gamewrtier }</td>
+           		<td>${board.gameboardtitle }</td>
+           		<td>${board.game_board_date }</td>
+           	</tr>
+           </c:forEach>
         </table>
 
         <div class="pagination-wrapper">
-            <div class="pagination">
-                <a href="#" class="prev">이전</a>
-                <a href="#" class="active">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
-                <a href="#" class="next">다음</a>
-            </div>
-            <button class="write-btn">공지작성</button>
+            <div  class="pagination" id="pageNavi"></div>
         </div>
 
 	
@@ -410,6 +397,12 @@
         $("#userpage").on("click", function(){ // 유저 관리 페이지 이동
         	window.location.href = "/userpage.AdminController";
         });
+        
+        $(document).on("click", ".user-row", function() { //게임게시판 내용보기
+		    let gameboardnum = $(this).data("gameboardnum");
+		    window.location.href = "/gameboardNum.AdminController?gameboardnum=" + gameboardnum;
+		});
+		
         
      // 공통 검색 함수
         function filterTable(keyword) {
@@ -437,7 +430,7 @@
             filterTable(keyword);
         });
         
-        $("#gameboard").on("click", function(){ // 게임 보드 이동버튼
+        $("#gameboard").on("click", function(){ //게임 보드 이동버튼
         	window.location.href = "/gameboard.AdminController"
         });
         
@@ -449,6 +442,46 @@
         	window.location.href = "/freeboard.AdminController"
         });
         
+        
+        let recordTotalCount = parseInt("${recordTotalCount}");
+		let recordCountPerPage = parseInt("${recordCountPerPage}");
+		let naviCountPerPage = parseInt("${naviCountPerPage}");
+		let currentPage = parseInt("${currentPage}");
+
+		let pageTotalCount = Math.ceil(recordTotalCount / recordCountPerPage);
+		if(currentPage < 1) {
+			currentPage=1;
+		}else if(currentPage > pageTotalCount) {
+			currentPage = pageTotalCount;
+		}
+		
+		let startNavi = Math.floor((currentPage - 1) / naviCountPerPage)
+				* naviCountPerPage + 1;
+		
+		let endNavi = startNavi + (naviCountPerPage - 1);
+		if (endNavi > pageTotalCount)
+			endNavi = pageTotalCount;
+
+		let html = "";
+		let needPrev = true;
+		let needNext = true;
+		
+		if(startNavi == 1) {needPrev = false;}
+		if(endNavi == pageTotalCount) {needNext = false;}
+
+		if (needPrev) {
+			html += "<a href='/userpage.AdminController?cpage=" + (startNavi - 1) + "'>< </a>";
+	      }
+
+	      for (let i = startNavi; i <= endNavi; i++) {
+	    	  html += "<a href='/userpage.AdminController?cpage=" + i + "'>" + i + "</a> ";
+	      }
+
+	      if (needNext) {
+	    	  html += "<a href='/userpage.AdminController?cpage=" + (endNavi + 1) + "'>> </a>";
+	      }
+	    
+		document.getElementById("pageNavi").innerHTML = html;
     </script>
 
     <footer class="footer">
