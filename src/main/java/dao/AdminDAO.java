@@ -300,15 +300,77 @@ public class AdminDAO {
 			}
 		}
 	}
-	
+
 	//게시판 view카운트
-		public void count(int count, String seq) throws Exception {
-			String sql = "update game_board set view_count = ? where game_seq = ?";
-			try(Connection con = this.getConnection();
-					PreparedStatement stat = con.prepareStatement(sql);){
-				stat.setInt(1, count);
-				stat.setString(2, seq);
-				stat.executeUpdate();
-			}
+	public void count(int count, String seq) throws Exception {
+		String sql = "update game_board set view_count = ? where game_seq = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setInt(1, count);
+			stat.setString(2, seq);
+			stat.executeUpdate();
 		}
+	}
+
+
+	//댓글 입력
+	public int comentInsert(GameboardComentDTO dto) throws Exception {
+		String sql = "insert into Game_Coment values(Game_Coment_seq.NEXTVAL,?,?,?,?,?)";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setInt(1, dto.getGame_parent_seq());
+			stat.setInt(2, 0);
+			stat.setString(3, dto.getGame_coment_writer());
+			stat.setString(4, dto.getGame_coment());
+			stat.setTimestamp(5, new java.sql.Timestamp(System.currentTimeMillis()));
+
+			return stat.executeUpdate();
+		}
+	}
+
+	//댓글 삭제
+	public int comentDelete(String seq) throws Exception {
+		String sql = "delete from Game_Coment where game_coment_seq = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, seq);
+
+			return stat.executeUpdate();
+		}
+	}
+
+	//댓글 수정
+	public int comentUpdate(String seq, String text) throws Exception {
+		String sql = "update Game_Coment set game_coment = ? where game_coment_seq = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql);){
+			stat.setString(1, text);
+			stat.setString(2, seq);
+
+			return stat.executeUpdate();
+		}
+	}	
+
+	//게시물 삭제
+	public int deleteGameBoard(String seq) throws Exception{
+		String sql = "delete from game_board where game_seq = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql)){
+			stat.setString(1, seq);
+
+			return stat.executeUpdate();
+		}
+	}
+
+	//게시물 수정
+	public int updateGameBoard(String seq, String text) throws Exception  {
+		String sql = "update game_board set gamecoment = ? where game_seq = ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement stat = con.prepareStatement(sql)){
+			stat.setString(1, text);
+			stat.setString(2, seq);
+
+			return stat.executeUpdate();
+		}
+	}
 }

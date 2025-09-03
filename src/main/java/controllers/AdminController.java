@@ -39,7 +39,7 @@ public class AdminController extends HttpServlet {
 				}
 			}else if(cmd.equals("/adminMain.AdminController")) { // 로그인 후 관리페이지 이동
 				response.sendRedirect("/admin/main.jsp");
-				
+
 			}else if(cmd.equals("/userpage.AdminController")) { // 사용자 관리 페이지 이동
 				String cpageStr = request.getParameter("cpage");
 				if (cpageStr == null || cpageStr.isEmpty()) {
@@ -48,26 +48,26 @@ public class AdminController extends HttpServlet {
 				}
 				int cpage = Integer.parseInt(cpageStr);
 
-			    // 전체 레코드 개수 가져오기
-			    int recordTotalCount = dao.getUserCount();
+				// 전체 레코드 개수 가져오기
+				int recordTotalCount = dao.getUserCount();
 
-			    ArrayList<userDTO> list =
-			            dao.selectFromTo(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
-			                             cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
-			    
+				ArrayList<userDTO> list =
+						dao.selectFromTo(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
+								cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
+
 				request.setAttribute("list", list);
 				request.setAttribute("recordTotalCount", recordTotalCount);
 				request.setAttribute("recordCountPerPage",UsersConfig.RECORD_COUNT_PER_PAGE);
 				request.setAttribute("naviCountPerPage", UsersConfig.NABI_COUNT_PER_PAGE);
 				request.setAttribute("currentPage", cpage);
 				request.getRequestDispatcher("/admin/user.jsp").forward(request, response);
-			
+
 			}else if(cmd.equals("/userDetail.AdminController")) { //유저 상세페이지
 				String user_id = request.getParameter("userId");
-				
+
 				userDTO dto = dao.getUserPage(user_id);
 				String black = dao.blackUser(user_id);
-				
+
 				if(black != "") {
 					request.setAttribute("blackUser", "O ) "+black);
 				}else {
@@ -75,22 +75,22 @@ public class AdminController extends HttpServlet {
 				}
 				request.setAttribute("dto", dto);
 				request.getRequestDispatcher("/users/usersPage.jsp").forward(request, response);
-			
+
 			}else if(cmd.equals("/inBlackListe.AdminController")) { // 블랙리스트 등록
 				String user_id = request.getParameter("userId");
 				String reason = request.getParameter("reason");
 				int resutl = dao.blackInsert(user_id, reason);
-				
+
 				request.setAttribute("userId", user_id);
 				response.getWriter().write(String.valueOf(resutl));
-				
+
 			}else if(cmd.equals("/dleBlackListe.AdminController")) { // 블랙리스트 해제
 				String user_id = request.getParameter("userId");
 				int resutl = dao.blackDelete(user_id);
-				
+
 				request.setAttribute("userId", user_id);
 				response.getWriter().write(String.valueOf(resutl));
-			
+
 			}else if(cmd.equals("/gameboard.AdminController")) { // 게임게시판 이동버튼 
 				String cpageStr = request.getParameter("cpage");
 				if (cpageStr == null || cpageStr.isEmpty()) {
@@ -99,19 +99,19 @@ public class AdminController extends HttpServlet {
 				}
 				int cpage = Integer.parseInt(cpageStr);
 
-			    int recordTotalCount = dao.getUserCount();
+				int recordTotalCount = dao.getUserCount();
 
-			    ArrayList<GameboardDTO> list =
-			            dao.seletAllGameboard(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
-			                             cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
-				
-			    request.setAttribute("list", list);
+				ArrayList<GameboardDTO> list =
+						dao.seletAllGameboard(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
+								cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
+
+				request.setAttribute("list", list);
 				request.setAttribute("recordTotalCount", recordTotalCount);
 				request.setAttribute("recordCountPerPage",UsersConfig.RECORD_COUNT_PER_PAGE);
 				request.setAttribute("naviCountPerPage", UsersConfig.NABI_COUNT_PER_PAGE);
 				request.setAttribute("currentPage", cpage);
 				request.getRequestDispatcher("/admin/gameboard.jsp").forward(request, response);
-				
+
 			}else if(cmd.equals("/gameboardNum.AdminController")) { //게임 게시물 출력
 				String gameboardnum = request.getParameter("gameboardnum");
 				ArrayList<GameboardDTO> list = dao.seletAllGameboardPrint(gameboardnum);
@@ -120,17 +120,43 @@ public class AdminController extends HttpServlet {
 				int count = list.get(0).getView_count();
 				count += 1;
 				dao.count(count, gameboardnum);
-				
+
 				request.setAttribute("viewCount", count);
 				request.setAttribute("comentCount", comentCount);
 				request.setAttribute("comentList", comentList);
 				request.setAttribute("list", list);
 				request.getRequestDispatcher("/board/gameboardPage.jsp").forward(request, response);
+
+			}else if(cmd.equals("/delGameboard.AdminController")) { //글 삭제
+				String seq = request.getParameter("seq");
+				int result = dao.deleteGameBoard(seq);
 				
+				response.getWriter().write(String.valueOf(result));
+				
+			}else if(cmd.equals("/updateGameboard.AdminController")) { //글 수정
+				String text = request.getParameter("text");
+				String seq = request.getParameter("seq");
+				
+				int result = dao.updateGameBoard(seq, text);
+				response.getWriter().write(String.valueOf(result));
+				
+			}else if(cmd.equals("/delGameboardComent.AdminController")) { //댓글 삭제
+				String seq = request.getParameter("seq");
+
+				int result = dao.comentDelete(seq);
+				response.getWriter().write(String.valueOf(result));
+
+			}else if(cmd.equals("/updatGameboardComent.AdminController")) { //댓글 수정
+				String seq = request.getParameter("seq");
+				String text = request.getParameter("text");
+
+				int result = dao.comentUpdate(seq, text);
+				response.getWriter().write(String.valueOf(result));
+
 			}else if(cmd.equals("/freeboard.AdminController")) { // 자유게시판 이동버튼
-				
+
 			}else if(cmd.equals("/QAboard.AdminController")) { // 문의게시판 이동버튼
-				
+
 			}
 		}catch(Exception e) {
 			e.printStackTrace();

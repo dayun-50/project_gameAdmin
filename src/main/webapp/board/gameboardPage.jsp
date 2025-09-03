@@ -285,7 +285,7 @@
         setInterval(createShootingStar, 2000);
         
         $("#backList").on("click", function (){ //목록으로
-        	window.location.href = "/game1borad.Game1Controller"
+        	window.location.href = "/gameboard.AdminController"
         });
         
         
@@ -295,7 +295,7 @@
       	   if(result){
       		   alert("게시물 삭제가 완료되셨습니다.");
       		   $.ajax({
-         				url: "/delete.Game1Controller",
+         				url: "/delGameboard.AdminController",
          				data: {
          				seq:$("#seq").val()
          				},
@@ -303,7 +303,7 @@
          				dataType: "json",
          				success: function(resp){
          				if(resp == 1){
-         					window.location.href = "/game1borad.Game1Controller";
+         					window.location.href = "/gameboard.AdminController";
          				}	
          			}
          		})  
@@ -316,7 +316,7 @@
         	   if(result){
         		   alert("댓글 삭제가 완료되셨습니다.");
         		   $.ajax({
-           				url: "/delete.GameComentController",
+           				url: "/delGameboardComent.AdminController",
            				data: {
            				seq:$(this).siblings(".comentseq").val()
            				},
@@ -324,7 +324,7 @@
            				dataType: "json",
            				success: function(resp){
            				if(resp == 1){
-           					window.location.href = "/game1boradDetil.Game1Controller?seq=${list[0].game_seq }";
+           					window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }";
            				}	
            			}
            		})  
@@ -346,7 +346,7 @@
         	$("#updtn, #dlebtn").show();
         	
         	$("#textbox").attr("contenteditable", false);
-        	window.location.href = "/game1boradDetil.Game1Controller?seq=${list[0].game_seq }"
+        	window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }"
         });
         
         $("#complebtn").on("click", function(){ //글 수정완료 버튼
@@ -355,7 +355,7 @@
         	$("#textbox").attr("contenteditable", false);
         	
         	$.ajax({
-   				url: "/updat.Game1Controller",
+   				url: "/updateGameboard.AdminController",
    				data: {
    				text:$("#textbox").text(),
    				seq:$("#seq").val()
@@ -364,7 +364,7 @@
    				dataType: "json",
    				success: function(resp){
    				if(resp == 1){
-   					window.location.href = "/game1boradDetil.Game1Controller?seq=${list[0].game_seq }";
+   					window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }";
    				}	
    			}
    		})  
@@ -387,13 +387,13 @@
         });
         
         $(".comentbackbtn").on("click", function(){ //댓글 수정 취소버튼
-        	window.location.href = "/game1boradDetil.Game1Controller?seq=${list[0].game_seq }"
+        	window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }";
         });
         
         $(".comentcomplbtn").on("click", function(){ //댓글 수정 완료버튼
         	let commentItem = $(this).closest(".comment-item");
         	$.ajax({
-   				url: "/updatComent.GameComentController",
+   				url: "/updatGameboardComent.AdminController",
    				data: {
    				text:commentItem.find(".comment-contents").text(),
    				seq:commentItem.find(".comentseq").val()
@@ -402,7 +402,7 @@
    				dataType: "json",
    				success: function(resp){
    				if(resp == 1){
-   					window.location.href = "/game1boradDetil.Game1Controller?seq=${list[0].game_seq }";
+   					window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }";
    				}	
    			}
    		})  
