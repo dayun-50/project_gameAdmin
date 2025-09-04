@@ -198,30 +198,29 @@
             }
         }
         
-        .post-content img {
+                .post-content img {
     max-width: 100%;
     height: auto;
     display: block;
     margin: 10px 0;
-}
+}   
     </style>
 </head>
 <body>
 <div class="container">
-        <h2>${list[0].fb_Title }</h2>
+        <h2>${list[0].inqu_title }</h2>
         <div class="meta-info">
-            <span>작성자: <strong>${list[0].fb_user_name }</strong></span> &nbsp;|&nbsp;
-            <span>작성일: ${list[0].fb_date }</span> &nbsp;|&nbsp;
-            <span>조회수: ${viewCount }</span>
+            <span>작성자: <strong>${list[0].inqu_user_name }</strong></span> &nbsp;|&nbsp;
+            <span>작성일: ${list[0].inqu_date }</span> &nbsp;|&nbsp;
         </div>
 
         <div class="pre post-content" id="textbox">
-			${list[0].fb_write }
+			${list[0].inqu_write }
         </div>
 
         <button class="btn-back" id="backList">목록으로</button>
       	
-   			 	<input type="hidden" id="seq" name="seq" value="${list[0].fb_id }">
+   			 	<input type="hidden" id="seq" name="seq" value="${list[0].inqu_id }">
        			 <button class="btn-delete" id="dlebtn">삭제하기</button>
        			 
    			
@@ -232,7 +231,7 @@
             <c:forEach var="Cdto" items="${comentList}">
                 <div class="comment-item">
                     <div class="comment-meta">
-                        <div>${Cdto.fc_user_name } | ${Cdto.fc_date }</div>
+                        <div>${adminNickname } | ${Cdto.inqc_date }</div>
                        
                        
    			 				<div class="comment-actions">
@@ -241,17 +240,17 @@
                             
                             <button class="comentcomplbtn">완료</button>
                             <button class="comentbackbtn">취소</button>
-                           <input type="hidden" class="comentseq" value="${Cdto.fc_id }">
+                           <input type="hidden" class="comentseq" value="${Cdto.inqc_seq }">
                         	</div>
    			 		
                     </div>
-                    <div class="comment-contents">${Cdto.fc_write }</div>
+                    <div class="comment-contents">${Cdto.inqc_write }</div>
                 </div>
            </c:forEach>
             </div>
 
-            <form class="comment-form" action="/fComentInsert.AdminController" method="post">
-				<input type="hidden" name="seq" value="${list[0].fb_id }">
+            <form class="comment-form" action="/QAComentInsert.AdminController" method="post">
+				<input type="hidden" name="seq" value="${list[0].inqu_id }">
                 <textarea placeholder="댓글을 입력하세요..." name="coment" required></textarea>
                 <button type="submit">댓글 등록</button>
             </form>
@@ -289,7 +288,7 @@
         setInterval(createShootingStar, 2000);
         
         $("#backList").on("click", function (){ //목록으로
-        	window.location.href = "/freeboard.AdminController"
+        	window.location.href = "/QAboard.AdminController"
         });
         
         
@@ -299,7 +298,7 @@
       	   if(result){
       		   alert("게시물 삭제가 완료되셨습니다.");
       		   $.ajax({
-         				url: "/delFreeboard.AdminController",
+         				url: "/delQAboard.AdminController",
          				data: {
          				seq:$("#seq").val()
          				},
@@ -307,7 +306,7 @@
          				dataType: "json",
          				success: function(resp){
          				if(resp == 1){
-         					window.location.href = "/freeboard.AdminController";
+         					window.location.href = "/QAboard.AdminController";
          				}	
          			}
          		})  
@@ -320,7 +319,7 @@
         	   if(result){
         		   alert("댓글 삭제가 완료되셨습니다.");
         		   $.ajax({
-           				url: "/delFreeboardComent.AdminController",
+           				url: "/delQAboardComent.AdminController",
            				data: {
            				seq:$(this).siblings(".comentseq").val()
            				},
@@ -328,13 +327,14 @@
            				dataType: "json",
            				success: function(resp){
            				if(resp == 1){
-           					window.location.href = "/freeboardNum.AdminController?freeboardnum=${list[0].fb_id }";
+           					window.location.href = "/QAboardnum.AdminController?qaboardnum=${list[0].inqu_id }";
            				}	
            			}
            		})  
         	   }
         });
-     
+        
+       
         
         $(".comentcomplbtn, .comentbackbtn").hide(); //댓글 수정완료/취소버튼
         
@@ -353,13 +353,13 @@
         });
         
         $(".comentbackbtn").on("click", function(){ //댓글 수정 취소버튼
-        	window.location.href = "/freeboardNum.AdminController?freeboardnum=${list[0].fb_id }";
+        	window.location.href = "/QAboardnum.AdminController?qaboardnum=${list[0].inqu_id }";
         });
         
         $(".comentcomplbtn").on("click", function(){ //댓글 수정 완료버튼
         	let commentItem = $(this).closest(".comment-item");
         	$.ajax({
-   				url: "/updatFreeboardComent.AdminController",
+   				url: "/updatQAboardComent.AdminController",
    				data: {
    				text:commentItem.find(".comment-contents").text(),
    				seq:commentItem.find(".comentseq").val()
@@ -368,7 +368,7 @@
    				dataType: "json",
    				success: function(resp){
    				if(resp == 1){
-   					window.location.href = "/freeboardNum.AdminController?freeboardnum=${list[0].fb_id }";
+   					window.location.href = "/QAboardnum.AdminController?qaboardnum=${list[0].inqu_id }";
    				}	
    			}
    		})  

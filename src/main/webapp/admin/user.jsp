@@ -461,7 +461,11 @@
 	    $(".box button:contains('게시물 관리')").on("click", function() {
 	    	window.location.href = "<%= request.getContextPath() %>/admin/main.jsp";
 	    });
-    </script>
+	    
+	    $("#boardpage").on("click", function(){ //게시판관리 이동페이지
+	    	window.location.href = "/QAboard.AdminController";
+	    });
+	    </script>
 
     <footer class="footer">
         <p>(주)자바 스프링 리액트로 완성하는 클라우드 활용 풀스택 개발 | 대표이사 조성태 | 주소 : 서울 관악구 봉천로 227 보라매샤르망 5층 한국정보교육원 | 전화 : 010-9006-2139 |

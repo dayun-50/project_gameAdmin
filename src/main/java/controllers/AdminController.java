@@ -17,6 +17,8 @@ import dto.FreeboardComentDTO;
 import dto.FreeboardDTO;
 import dto.GameboardComentDTO;
 import dto.GameboardDTO;
+import dto.QAboardComentDTO;
+import dto.QAboardDTO;
 import dto.userDTO;
 
 
@@ -41,9 +43,6 @@ public class AdminController extends HttpServlet {
 					session.setAttribute("loginId", id);
 					response.getWriter().write(String.valueOf(result));
 				}
-			}else if(cmd.equals("/adminMain.AdminController")) { // 로그인 후 관리페이지 이동
-				response.sendRedirect("/admin/main.jsp");
-
 			}else if(cmd.equals("/userpage.AdminController")) { // 사용자 관리 페이지 이동
 				String cpageStr = request.getParameter("cpage");
 				if (cpageStr == null || cpageStr.isEmpty()) {
@@ -137,13 +136,6 @@ public class AdminController extends HttpServlet {
 
 				response.getWriter().write(String.valueOf(result));
 
-			}else if(cmd.equals("/updateGameboard.AdminController")) { // 게임 게시판 글 수정
-				String text = request.getParameter("text");
-				String seq = request.getParameter("seq");
-
-				int result = dao.updateGameBoard(seq, text);
-				response.getWriter().write(String.valueOf(result));
-
 			}else if(cmd.equals("/comentInsert.AdminController")){ // 게임 게시판 댓글 입력
 				String prent_seq = request.getParameter("seq");
 				String coment = request.getParameter("coment");
@@ -207,13 +199,6 @@ public class AdminController extends HttpServlet {
 
 				response.getWriter().write(String.valueOf(result));
 
-			}else if(cmd.equals("/updateFreeboard.AdminController")) { // 자유 게시판 글 수정
-				String text = request.getParameter("text");
-				String seq = request.getParameter("seq");
-
-				int result = dao.updateFreeBoard(seq, text);
-				response.getWriter().write(String.valueOf(result));
-
 			}else if(cmd.equals("/delFreeboardComent.AdminController")) { // 자유 게시판 댓글 삭제
 				String seq = request.getParameter("seq");
 
@@ -236,7 +221,67 @@ public class AdminController extends HttpServlet {
 				response.sendRedirect("/freeboardNum.AdminController?freeboardnum="+prent_seq);
 				
 			}else if(cmd.equals("/QAboard.AdminController")) { // 문의게시판 이동버튼 (로그인 후 메인버튼)
+				String cpageStr = request.getParameter("cpage");
+				if (cpageStr == null || cpageStr.isEmpty()) {
+					response.sendRedirect(request.getRequestURI() + "?cpage=1");
+					return;
+				}
+				int cpage = Integer.parseInt(cpageStr);
 
+				int recordTotalCount = dao.getQAboardCount();
+
+				ArrayList<QAboardDTO> list =
+						dao.seletAllQAboard(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
+								cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
+				
+				ArrayList<String> comentCount = dao.selectComentWhether();
+				
+				request.setAttribute("comentCount", comentCount);
+				request.setAttribute("list", list);
+				request.setAttribute("recordTotalCount", recordTotalCount);
+				request.setAttribute("recordCountPerPage",UsersConfig.RECORD_COUNT_PER_PAGE);
+				request.setAttribute("naviCountPerPage", UsersConfig.NABI_COUNT_PER_PAGE);
+				request.setAttribute("currentPage", cpage);
+				request.getRequestDispatcher("/admin/main.jsp").forward(request, response);
+				
+			}else if(cmd.equals("/QAboardnum.AdminController")) { // 문의 게시물 출력
+				String qaboardnum = request.getParameter("qaboardnum");
+				ArrayList<QAboardDTO> list = dao.seletAllQAboardPrint(qaboardnum);
+				ArrayList<QAboardComentDTO> comentList = dao.seletAllQBComent(qaboardnum);
+				int comentCount = dao.qCountComent(qaboardnum);
+
+				request.setAttribute("adminNickname", "관리자");
+				request.setAttribute("comentCount", comentCount);
+				request.setAttribute("comentList", comentList);
+				request.setAttribute("list", list);
+				request.getRequestDispatcher("/board/QAboradPage.jsp").forward(request, response);
+
+			}else if(cmd.equals("/delQAboard.AdminController")) { // 문의 게시판 글 삭제
+				String seq = request.getParameter("seq");
+				int result = dao.deleteQABoard(seq);
+
+				response.getWriter().write(String.valueOf(result));
+				
+			}else if(cmd.equals("/QAComentInsert.AdminController")) { // 문의 게시판 댓글 입력
+				String prent_seq = request.getParameter("seq");
+				String coment = request.getParameter("coment");
+
+				dao.qaComentInsert(new QAboardComentDTO(0, Integer.parseInt(prent_seq), coment, ""));
+				response.sendRedirect("/QAboardnum.AdminController?qaboardnum="+prent_seq);
+				
+			}else if(cmd.equals("/delQAboardComent.AdminController")) { // 문의 게시판 댓글 삭제
+				String seq = request.getParameter("seq");
+
+				int result = dao.QAComentDelete(seq);
+				response.getWriter().write(String.valueOf(result));
+			
+			}else if(cmd.equals("/updatQAboardComent.AdminController")) { // 문의 게시판 댓글 수정
+				String seq = request.getParameter("seq");
+				String text = request.getParameter("text");
+
+				int result = dao.QAComentUpdate(seq, text);
+				response.getWriter().write(String.valueOf(result));
+				
 			}
 		}catch(Exception e) {
 			e.printStackTrace();

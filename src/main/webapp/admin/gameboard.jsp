@@ -431,11 +431,25 @@
             filterTable(keyword);
         });
         
+     // ✅ 실시간 검색 함수
+	    function filterTable(keyword) {
+	        $("#table2 tr").each(function (index) {
+	            if (index === 0) return; // 첫 번째 행(헤더)은 건너뜀
+
+	            let rowText = $(this).text(); // 행 전체 텍스트 (ID, 닉네임, 날짜 모두 포함)
+	            if (rowText.includes(keyword)) {
+	                $(this).show();
+	            } else {
+	                $(this).hide();
+	            }
+	        });
+	    }
+        
         $("#gameboard").on("click", function(){ //게임 보드 이동버튼
         	window.location.href = "/gameboard.AdminController"
         });
         
-        $("#QAboard").on("click", function(){ // 문의 게시판 이동버튼
+        $("#mainpage").on("click", function(){ // 문의 게시판 이동버튼
         	window.location.href = "/QAboard.AdminController"
         });
         

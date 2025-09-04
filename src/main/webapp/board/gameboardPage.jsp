@@ -197,6 +197,13 @@
                 opacity: 0;
             }
         }
+        
+            .post-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
     </style>
 </head>
 <body>
@@ -208,18 +215,15 @@
             <span>조회수: ${viewCount }</span>
         </div>
 
-        <div class="pre" id="textbox">
+        <div class="pre post-content" id="textbox">
 			${list[0].gamecoment }
         </div>
 
         <button class="btn-back" id="backList">목록으로</button>
       	
    			 	<input type="hidden" id="seq" name="seq" value="${list[0].game_seq }">
-        		<button class="btn-edit" id="updtn">수정하기</button>
        			 <button class="btn-delete" id="dlebtn">삭제하기</button>
        			 
-       			<button class="btn-edit" id="complebtn">수정완료</button>
-       			 <button class="btn-delete" id="backbtn">수정취소</button>
    			
         <div class="comment-section">
             <h4>댓글 <small>(${comentCount })</small></h4>
@@ -331,45 +335,7 @@
         	   }
         });
         
-        $("#complebtn, #backbtn").hide(); //글 수정완료/수정취소 버튼
-        
-        $("#updtn").on("click", function(){ //글 수정버튼 클릭시
-        	$("#complebtn, #backbtn").show();
-        	$("#updtn, #dlebtn").hide();
-        	
-        	$("#textbox").attr("contenteditable", true); 
-        	
-        });
-         
-        $("#backbtn").on("click", function(){ //글 수정취소 버튼
-        	$("#complebtn, #backbtn").hide();
-        	$("#updtn, #dlebtn").show();
-        	
-        	$("#textbox").attr("contenteditable", false);
-        	window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }"
-        });
-        
-        $("#complebtn").on("click", function(){ //글 수정완료 버튼
-        	$("#complebtn, #backbtn").show();
-        	$("#updtn, #dlebtn").hide();
-        	$("#textbox").attr("contenteditable", false);
-        	
-        	$.ajax({
-   				url: "/updateGameboard.AdminController",
-   				data: {
-   				text:$("#textbox").text(),
-   				seq:$("#seq").val()
-   				},
-   				type: "post",
-   				dataType: "json",
-   				success: function(resp){
-   				if(resp == 1){
-   					window.location.href = "/gameboardNum.AdminController?gameboardnum=${list[0].game_seq }";
-   				}	
-   			}
-   		})  
-        });
-        
+     
         $(".comentcomplbtn, .comentbackbtn").hide(); //댓글 수정완료/취소버튼
         
         $(".comentupbtn").on("click", function(){ //댓글수정

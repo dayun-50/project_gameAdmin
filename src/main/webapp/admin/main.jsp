@@ -357,36 +357,25 @@
 
         <table class="table2" id="table2">
             <tr>
+            	<th></th>
                 <th>제목</th>
                 <th>닉네임</th>
                 <th>날짜</th>
-                <th>조회수</th>
+                <th>댓글여부</th>
             </tr>
-            <tr>
-                <td>혜빈쨩</td>
-                <td>하잇</td>
-                <td>2025-08-29</td>
-                <td>나니가스키</td>
-            </tr>
-            <tr>
-                <td>초코민토</td>
-                <td>요리모</td>
-                <td>2025-08-29</td>
-                <td>아나타</td>
-            </tr>
+            <c:forEach var="board" items="${list}" varStatus="status">
+           	<tr class="user-row" data-qaboardnum="${board.inqu_id}">
+           		<td>${board.inqu_id}</td>
+           		<td>${board.inqu_title }</td>
+           		<td>${board.inqu_user_name }</td>
+           		<td>${board.inqu_date }</td>
+           		<td>${comentCount[status.index] }</td>
+           	</tr>
+           </c:forEach>
         </table>
 
         <div class="pagination-wrapper">
-            <div class="pagination">
-                <a href="#" class="prev">이전</a>
-                <a href="#" class="active">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
-                <a href="#" class="next">다음</a>
-            </div>
-            <button class="write-btn">공지작성</button>
+             <div  class="pagination" id="pageNavi"></div>
         </div>
 
 	
@@ -436,6 +425,20 @@
             filterTable(keyword);
         });
 
+     // ✅ 실시간 검색 함수
+	    function filterTable(keyword) {
+	        $("#table2 tr").each(function (index) {
+	            if (index === 0) return; // 첫 번째 행(헤더)은 건너뜀
+
+	            let rowText = $(this).text(); // 행 전체 텍스트 (ID, 닉네임, 날짜 모두 포함)
+	            if (rowText.includes(keyword)) {
+	                $(this).show();
+	            } else {
+	                $(this).hide();
+	            }
+	        });
+	    }
+        
         
         $("#gameboard").on("click", function(){ // 게임 보드 이동버튼
         	window.location.href = "/gameboard.AdminController"
@@ -454,6 +457,52 @@
 	        alert("지금 보고 계시는 화면이 게시물 관리 페이지 입니다.");
 	    });
 
+        
+        let recordTotalCount = parseInt("${recordTotalCount}");
+		let recordCountPerPage = parseInt("${recordCountPerPage}");
+		let naviCountPerPage = parseInt("${naviCountPerPage}");
+		let currentPage = parseInt("${currentPage}");
+
+		let pageTotalCount = Math.ceil(recordTotalCount / recordCountPerPage);
+		if(currentPage < 1) {
+			currentPage=1;
+		}else if(currentPage > pageTotalCount) {
+			currentPage = pageTotalCount;
+		}
+		
+		let startNavi = Math.floor((currentPage - 1) / naviCountPerPage)
+				* naviCountPerPage + 1;
+		
+		let endNavi = startNavi + (naviCountPerPage - 1);
+		if (endNavi > pageTotalCount)
+			endNavi = pageTotalCount;
+
+		let html = "";
+		let needPrev = true;
+		let needNext = true;
+		
+		if(startNavi == 1) {needPrev = false;}
+		if(endNavi == pageTotalCount) {needNext = false;}
+
+		if (needPrev) {
+			html += "<a href='/QAboard.AdminController?cpage=" + (startNavi - 1) + "'>< </a>";
+	      }
+
+	      for (let i = startNavi; i <= endNavi; i++) {
+	    	  html += "<a href='/QAboard.AdminController?cpage=" + i + "'>" + i + "</a> ";
+	      }
+
+	      if (needNext) {
+	    	  html += "<a href='/QAboard.AdminController?cpage=" + (endNavi + 1) + "'>> </a>";
+	      }
+	    
+		document.getElementById("pageNavi").innerHTML = html;
+		
+		$(document).on("click", ".user-row", function() { //문의게시판 내용보기
+		    let qaboardnum = $(this).data("qaboardnum");
+		    window.location.href = "/QAboardnum.AdminController?qaboardnum=" + qaboardnum;
+		});
+        
     </script>
 
     <footer class="footer">
