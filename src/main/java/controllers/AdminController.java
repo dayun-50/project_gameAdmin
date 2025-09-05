@@ -19,7 +19,7 @@ import dto.GameboardComentDTO;
 import dto.GameboardDTO;
 import dto.QAboardComentDTO;
 import dto.QAboardDTO;
-import dto.userDTO;
+import dto.UserDTO;
 
 
 @WebServlet("*.AdminController")
@@ -54,7 +54,7 @@ public class AdminController extends HttpServlet {
 				// 전체 레코드 개수 가져오기
 				int recordTotalCount = dao.getUserCount();
 
-				ArrayList<userDTO> list =
+				ArrayList<UserDTO> list =
 						dao.selectFromTo(cpage*UsersConfig.RECORD_COUNT_PER_PAGE-(UsersConfig.RECORD_COUNT_PER_PAGE-1),
 								cpage*UsersConfig.RECORD_COUNT_PER_PAGE);
 
@@ -68,7 +68,7 @@ public class AdminController extends HttpServlet {
 			}else if(cmd.equals("/userDetail.AdminController")) { //유저 상세페이지
 				String user_id = request.getParameter("userId");
 
-				userDTO dto = dao.getUserPage(user_id);
+				UserDTO dto = dao.getUserPage(user_id);
 				String black = dao.blackUser(user_id);
 
 				if(black != "") {

@@ -21,7 +21,7 @@ import dto.GameboardComentDTO;
 import dto.GameboardDTO;
 import dto.QAboardComentDTO;
 import dto.QAboardDTO;
-import dto.userDTO;
+import dto.UserDTO;
 
 public class AdminDAO {
 	private static AdminDAO instance;
@@ -80,12 +80,12 @@ public class AdminDAO {
 	//	}
 
 	//유저 목록출력
-	public ArrayList<userDTO> userList() throws Exception {
+	public ArrayList<UserDTO> userList() throws Exception {
 		String sql = "select * from users";
 		try(Connection con = this.getConnection();
 				PreparedStatement stat = con.prepareStatement(sql);){
 
-			ArrayList<userDTO> list = new ArrayList<>();
+			ArrayList<UserDTO> list = new ArrayList<>();
 			try(ResultSet rs = stat.executeQuery();){
 				while(rs.next()) {
 					String id = rs.getString("user_id");
@@ -97,7 +97,7 @@ public class AdminDAO {
 					String regdate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 					String agree = rs.getString("agree");
 
-					list.add(new userDTO(id, "", nickname, name, phone, email, regdate, agree));
+					list.add(new UserDTO(id, "", nickname, name, phone, email, regdate, agree));
 				}
 				return list;
 			}
@@ -105,14 +105,14 @@ public class AdminDAO {
 	}
 
 	//유저목록...네비로만들라니까 계속 까먹네 아이고야
-	public ArrayList<userDTO> selectFromTo(int from, int to) throws Exception{
+	public ArrayList<UserDTO> selectFromTo(int from, int to) throws Exception{
 		String sql = "SELECT * FROM ( SELECT users.*, ROW_NUMBER() OVER (ORDER BY user_join_date DESC) rn FROM users ) sub WHERE rn BETWEEN ? AND ?";
 		try(Connection con = this.getConnection();
 				PreparedStatement stat = con.prepareStatement(sql);){
 			stat.setInt(1, from);
 			stat.setInt(2, to);
 
-			ArrayList<userDTO> list = new ArrayList<>();
+			ArrayList<UserDTO> list = new ArrayList<>();
 			try(ResultSet rs = stat.executeQuery();){
 				while(rs.next()) {
 					String id = rs.getString("user_id");
@@ -124,7 +124,7 @@ public class AdminDAO {
 					String regdate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 					String agree = rs.getString("agree");
 
-					list.add(new userDTO(id, "", nickname, name, phone, email, regdate, agree));
+					list.add(new UserDTO(id, "", nickname, name, phone, email, regdate, agree));
 				}
 				return list;
 			}
@@ -146,7 +146,7 @@ public class AdminDAO {
 	}
 
 	//유저 상세정보 출력
-	public userDTO getUserPage(String user_id) throws Exception {
+	public UserDTO getUserPage(String user_id) throws Exception {
 		String sql = "select * from users where user_id = ?";
 		try(Connection con = this.getConnection();
 				PreparedStatement stat = con.prepareStatement(sql);){
@@ -163,7 +163,7 @@ public class AdminDAO {
 					String regdate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 					String agree = rs.getString("agree");
 
-					return new userDTO(id, "", nickname, name, phone, email, regdate, agree);
+					return new UserDTO(id, "", nickname, name, phone, email, regdate, agree);
 				}
 				return null;
 			}

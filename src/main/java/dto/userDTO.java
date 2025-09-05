@@ -1,6 +1,6 @@
 package dto;
 
-public class userDTO {
+public class UserDTO {
 	private String user_id;
 	private String user_pw;
 	private String user_nickname;
@@ -10,8 +10,8 @@ public class userDTO {
 	private String user_date;
 	private String agree;
 	
-	public userDTO() {}
-	public userDTO(String user_id, String user_pw, String user_nickname, String user_name, String user_phone,
+	public UserDTO() {}
+	public UserDTO(String user_id, String user_pw, String user_nickname, String user_name, String user_phone,
 			String user_email, String user_date, String agree) {
 		super();
 		this.user_id = user_id;
