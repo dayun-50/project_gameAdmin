@@ -323,6 +323,11 @@
             /* 문단 간 간격 최소화 */
             font-size: 12px;
         }
+        
+        .titlestyle{
+        width: 30%;
+        }
+        
     </style>
 </head>
 <body>
@@ -361,15 +366,24 @@
                 <th>제목</th>
                 <th>닉네임</th>
                 <th>날짜</th>
-                <th>댓글여부</th>
+                <th>답글여부</th>
             </tr>
             <c:forEach var="board" items="${list}" varStatus="status">
            	<tr class="user-row" data-qaboardnum="${board.inqu_id}">
            		<td>${board.inqu_id}</td>
-           		<td>${board.inqu_title }</td>
+           		<td class="titlestyle">${board.inqu_title }</td>
            		<td>${board.inqu_user_name }</td>
            		<td>${board.inqu_date }</td>
-           		<td>${comentCount[status.index] }</td>
+           		<td>
+           		<c:choose>
+           		<c:when test="${comentCount[status.index] > 0}">
+           		완료
+           		</c:when>
+           		<c:otherwise>
+           		X
+           		</c:otherwise>
+           		</c:choose>
+           		</td>
            	</tr>
            </c:forEach>
         </table>

@@ -587,7 +587,7 @@ public class AdminDAO {
 
 	//문의 게시판 댓글 갯수 카운트
 	public int qCountComent(String parent_seq) throws Exception {
-		String sql = "SELECT COUNT(*) AS cnt FROM inquries_comment WHERE inqc_seq = ?";
+		String sql = "SELECT COUNT(*) AS cnt FROM inquries_comment WHERE inqu_id = ?";
 		try(Connection con = this.getConnection();
 				PreparedStatement stat = con.prepareStatement(sql);){
 			stat.setString(1, parent_seq);
