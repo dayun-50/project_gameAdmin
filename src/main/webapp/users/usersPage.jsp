@@ -106,7 +106,7 @@
             padding-right: 40px;
         }
 
-        .btn-submit {
+        #givBlack {
             width: 25%;
             padding: 10px;
             margin-left: 20px;
@@ -119,7 +119,7 @@
             display: block;
         }
 
-        #givBlack {
+        btn-submit {
         	background: linear-gradient(to right, #678989, #304242);
             color: #0d0d1a;
             float: left;
