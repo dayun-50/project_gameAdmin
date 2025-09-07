@@ -341,7 +341,7 @@
         </div>
 
         <div class="top">
-            <h1>Master Admin</h1>
+            <h1>문의사항 관리</h1>
         </div>
 
         <div class="control2">
