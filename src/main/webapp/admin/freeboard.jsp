@@ -336,7 +336,7 @@
         </div>
 
         <div class="top">
-            <h1>게임 게시판 관리</h1>
+            <h1>자유 게시판 관리</h1>
         </div>
 
         <div class="control2">
