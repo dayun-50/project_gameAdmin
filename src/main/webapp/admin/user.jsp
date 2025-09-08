@@ -352,14 +352,12 @@
 
         <table class="table2" id="table2">
             <tr>
-            	<th></th>
                 <th>ID</th>
                 <th>닉네임</th>
                 <th>날짜</th>
             </tr>
            <c:forEach var="user" items="${list}" varStatus="status">
            	<tr class="user-row" data-userid="${user.user_id}">
-           		<td>${status.index + 1 }</td>
            		<td>${user.user_id }</td>
            		<td>${user.user_nickname }</td>
            		<td>${user.user_date }</td>
